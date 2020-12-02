@@ -1,0 +1,38 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <tilte>Final de Servicios Telematicos</tilte>
+    <br> </br>
+</head>
+<body>
+    Nombre: <input id="nombre" type="text" placeholder="Nombre"><br><!--Binding-->
+    Apellido: <input id="apellido" type="text" placeholder="apellido"><br>
+    Fecha de nacimiento: <input id="fechaNacimiento" type="date" placeholder="fecha de nacimiento"><br>
+    pais: <select id="pais" type="text">
+        <option value="........">Eligir</option>
+        <option value="Colombia">Colombia</option>
+        <option value="Chiles">Chiles</option>
+        <option value="Ecuador">Ecuador</option>
+    </select><br>
+    <button id="btn-guardar" type="button" onclick="guardar()">Guardar</button>
+    <button id="btn-actualizar" type="button" onclick="actualizar()" style="display:none">Actualizar</button>
+    <button type="button" onclick="limpiar()">Nuevo</button>
+
+    <hr>
+    <table id="tabla-usuarios">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Fecha nacimiento</th>
+                <th>pais</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/controlador.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define :obito do |obito|
+    obito.vm.box = "bento/centos-7"
+    obito.vm.hostname = "obito"
+    obito.vm.provision "file", source: "streama.service", destination: "/etc/systemd/system/streama.service"
+    obito.vm.network :public_network,:bridge=>"eth0"
+
+config.vm.provision "shell", inline: <<-SHELL
+        yum install -y update
+        yum install -y java
+        yum install -y nano
+        yum install -y vim
+        yum install -y git
+	git init
+        wget https://github.com/dularion/streama/releases/download/v1.1/streama-1.1.war
+        mkdir /opt/streama
+        mv streama-1.1.war /opt/streama/streama.war
+        mkdir /opt/streama/media
+        chmod 664 /opt/streama/media
+        systemctl start streama
+        systemctl enable streama
+        service NetworkManager stop
+        chkconfig NetworkManager off
+        systemctl start firewalld.service
+        firewall-cmd --zone=dmz --add-interface=eth1 --permanent
+        firewall-cmd --set-default-zone=dmz
+        firewall-cmd --zone=dmz --add-rich-rule 'rule family="ipv4" source address=192.168.1.108 accept' --permanent
+        firewall-cmd --zone=dmz --add-icmp-block={echo-request,echo-reply,timestamp-reply,timestamp-request} --permanent
+        firewall-cmd --reload
+        systemctl restart firewalld.service
+        service network restart
+ SHELL
+  end
+  config.vm.define :itachi do |itachi|
+    itachi.vm.box = "bento/centos-7"
+    itachi.vm.hostname = "itachi"
+    itachi.vm.network :public_network,:bridge=>"eth0"
+config.vm.provision "shell", inline: <<-SHELL
+    yum install update
+    yum install -y firewalld
+    yum install -y vim
+    yum install -y nano
+    service NetworkManager stop
+    chkconfig NetworkManager off
+    systemctl start firewalld.service
+    firewall-cmd --zone=public --add-interface=eth1 --permanent
+    firewall-cmd --zone=public --add-masquerade --permanent
+    firewall-cmd --zone=public --add-service=http --permanent
+    firewall-cmd --zone="public" --add-forward-port=port=80:proto=tcp:toport=8080:toaddr=192.168.1.107 --permanent
+    firewall-cmd --zone=public --add-icmp-block={echo-request,echo-reply,timestamp-reply,timestamp-request} --permanent
+    firewall-cmd --reload
+    systemctl restart firewalld.service
+    service network restart
+ SHELL
+  end
+end
